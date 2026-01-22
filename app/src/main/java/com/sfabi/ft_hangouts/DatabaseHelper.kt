@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
         private const val DATABASE_NAME = "ft_hangouts.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
 
         const val TABLE_CONTACTS = "contacts"
         const val COL_ID = "id"
@@ -16,6 +16,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         const val COL_EMAIL = "email"
         const val COL_ADDRESS = "address"
         const val COL_NOTE = "note"
+        const val COL_IMAGE = "image"
 
         const val TABLE_MESSAGES = "messages"
         const val COL_MSG_ID = "id"
@@ -32,7 +33,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 + "$COL_PHONE TEXT, "
                 + "$COL_EMAIL TEXT, "
                 + "$COL_ADDRESS TEXT, "
-                + "$COL_NOTE TEXT)")
+                + "$COL_NOTE TEXT, "
+                + "$COL_IMAGE TEXT)")
 
 
         val createMessagesTable = ("CREATE TABLE $TABLE_MESSAGES ("
@@ -63,6 +65,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             put(COL_EMAIL, contact.email)
             put(COL_ADDRESS, contact.address)
             put(COL_NOTE, contact.note)
+            put(COL_IMAGE, contact.imageUri)
         }
 
         val result = db.insert(TABLE_CONTACTS, null, values)
@@ -70,6 +73,49 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         db.close()
 
         return result
+    }
+
+    fun getAllContacts(): List<Contact> {
+        val contactList = ArrayList<Contact>()
+        
+        val db = this.readableDatabase
+        
+        val selectQuery = "SELECT * FROM $TABLE_CONTACTS"
+        
+        val cursor = db.rawQuery(selectQuery, null)
+
+        if (cursor.moveToFirst()) {
+            do {
+
+                val idIndex = cursor.getColumnIndex(COL_ID)
+                val nameIndex = cursor.getColumnIndex(COL_NAME)
+                val phoneIndex = cursor.getColumnIndex(COL_PHONE)
+                val emailIndex = cursor.getColumnIndex(COL_EMAIL)
+                val addressIndex = cursor.getColumnIndex(COL_ADDRESS)
+                val noteIndex = cursor.getColumnIndex(COL_NOTE)
+                val imageIndex = cursor.getColumnIndex(COL_IMAGE)
+
+                if (idIndex != -1 && nameIndex != -1 && phoneIndex != -1) {
+                    
+                    val id = cursor.getInt(idIndex)
+                    val name = cursor.getString(nameIndex)
+                    val phone = cursor.getString(phoneIndex)
+                    val email = cursor.getString(emailIndex)
+                    val address = cursor.getString(addressIndex)
+                    val note = cursor.getString(noteIndex)
+                    val imageUri = cursor.getString(imageIndex)
+
+                    val contact = Contact(id, name, phone, email, address, note, imageUri)
+                    
+                    contactList.add(contact)
+                }
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        db.close()
+        
+        return contactList
     }
 
 }
