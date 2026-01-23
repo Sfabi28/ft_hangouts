@@ -90,7 +90,12 @@ class MainActivity : AppCompatActivity() {
         listView.setOnItemClickListener { _, _, position, _ ->
             val selectedChat = chatList[position]
 
-            android.widget.Toast.makeText(this, "Apro chat con ${selectedChat.contactName}", android.widget.Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, ChatActivity::class.java)
+
+            intent.putExtra("key_name", selectedChat.contactName)
+            intent.putExtra("key_phone", selectedChat.phoneNumber)
+
+            startActivity(intent)
         }
     }
 }

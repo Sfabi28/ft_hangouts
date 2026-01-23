@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
         private const val DATABASE_NAME = "ft_hangouts.db"
-        private const val DATABASE_VERSION = 3
+        private const val DATABASE_VERSION = 4
 
         const val TABLE_CONTACTS = "contacts"
         const val COL_ID = "id"
@@ -176,6 +176,29 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         cursor.close()
         db.close()
         return previewList
+    }
+
+    fun getContactByPhone(phoneNumber: String): Contact? {
+        val db = this.readableDatabase
+
+        val cursor = db.rawQuery("SELECT * FROM $TABLE_CONTACTS WHERE $COL_PHONE = ?", arrayOf(phoneNumber))
+
+        var contact: Contact? = null
+
+        if (cursor.moveToFirst()) {
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow(COL_ID))
+            val name = cursor.getString(cursor.getColumnIndexOrThrow(COL_NAME))
+            val phone = cursor.getString(cursor.getColumnIndexOrThrow(COL_PHONE))
+            val email = cursor.getString(cursor.getColumnIndexOrThrow(COL_EMAIL))
+            val address = cursor.getString(cursor.getColumnIndexOrThrow(COL_ADDRESS))
+            val note = cursor.getString(cursor.getColumnIndexOrThrow(COL_NOTE))
+            val imageUri = cursor.getString(cursor.getColumnIndexOrThrow(COL_IMAGE))
+
+            contact = Contact(id, name, phone, email, address, note, imageUri)
+        }
+
+        cursor.close()
+        return contact
     }
 }
 

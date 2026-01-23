@@ -3,7 +3,7 @@
     android:id="@+id/header_bar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="#000000">
+    android:background="@color/header_default">
 
     <TextView
         android:id="@+id/header_title"
