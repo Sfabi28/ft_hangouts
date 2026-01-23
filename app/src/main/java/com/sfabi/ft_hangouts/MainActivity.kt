@@ -1,15 +1,30 @@
 package com.sfabi.ft_hangouts
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var dbHelper: DatabaseHelper
     private lateinit var listView: ListView
+
+    private val PERMISSION_REQUEST_CODE = 100
+
+    private val REQUIRED_PERMISSIONS = arrayOf(
+        Manifest.permission.SEND_SMS,
+        Manifest.permission.RECEIVE_SMS,
+        Manifest.permission.READ_SMS,
+        Manifest.permission.CALL_PHONE
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,13 +39,47 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddContactActivity::class.java)
             startActivity(intent)
         }
+
+        if (!hasPermissions()) {
+            requestPermissions()
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        loadChats()
+        if (hasPermissions()) {
+            loadChats()
+        }
     }
 
+    private fun hasPermissions(): Boolean {
+        for (permission in REQUIRED_PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun requestPermissions() {
+        ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, PERMISSION_REQUEST_CODE)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                loadChats()
+            } else {
+                Toast.makeText(this, "Senza permessi l'app non può funzionare!", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
     private fun loadChats() {
         val chatList = dbHelper.getChatPreviews()
 
