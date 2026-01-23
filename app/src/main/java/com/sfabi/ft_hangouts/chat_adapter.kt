@@ -1,4 +1,71 @@
 package com.sfabi.ft_hangouts
 
-class chat_adapter {
+import android.content.Context
+import android.net.Uri
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.BaseAdapter
+import android.widget.ImageView
+import android.widget.TextView
+import java.text.SimpleDateFormat
+import java.util.*
+
+class ChatAdapter(private val context: Context, private val chatList: List<ChatPreview>) : BaseAdapter() {
+
+    override fun getCount(): Int = chatList.size
+
+    override fun getItem(position: Int): Any = chatList[position]
+
+    override fun getItemId(position: Int): Long = position.toLong()
+
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+        val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_chat, parent, false)
+
+        val chat = chatList[position]
+
+        val tvName = view.findViewById<TextView>(R.id.tvContactName)
+        val tvMessage = view.findViewById<TextView>(R.id.tvLastMessage)
+        val tvTime = view.findViewById<TextView>(R.id.tvTimestamp)
+        val imgAvatar = view.findViewById<ImageView>(R.id.imgAvatar)
+
+        tvName.text = chat.contactName
+
+        if (chat.lastMessage.isEmpty()) {
+            tvMessage.text = "Tocca per iniziare a scrivere..."
+            tvMessage.setTypeface(null, android.graphics.Typeface.ITALIC)
+        } else {
+            tvMessage.text = chat.lastMessage
+            tvMessage.setTypeface(null, android.graphics.Typeface.NORMAL)
+        }
+
+        if (chat.timestamp.isNotEmpty()) {
+            try {
+                val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+                val netDate = Date(chat.timestamp.toLong())
+                tvTime.text = sdf.format(netDate)
+            } catch (e: Exception) {
+                tvTime.text = ""
+            }
+        } else {
+            tvTime.text = ""
+        }
+
+        if (chat.imageUri != null && chat.imageUri.isNotEmpty()) {
+            try {
+                val file = java.io.File(chat.imageUri)
+                if (file.exists()) {
+                    imgAvatar.setImageURI(Uri.fromFile(file))
+                } else {
+                    imgAvatar.setImageResource(android.R.drawable.sym_def_app_icon)
+                }
+            } catch (e: Exception) {
+                imgAvatar.setImageResource(android.R.drawable.sym_def_app_icon)
+            }
+        } else {
+            imgAvatar.setImageResource(android.R.drawable.sym_def_app_icon)
+        }
+
+        return view
+    }
 }

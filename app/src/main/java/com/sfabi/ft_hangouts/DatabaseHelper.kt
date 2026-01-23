@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
         private const val DATABASE_NAME = "ft_hangouts.db"
-        private const val DATABASE_VERSION = 2
+        private const val DATABASE_VERSION = 3
 
         const val TABLE_CONTACTS = "contacts"
         const val COL_ID = "id"
@@ -24,6 +24,13 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         const val COL_MSG_BODY = "body"
         const val COL_MSG_TIME = "timestamp"
         const val COL_MSG_TYPE = "type"
+
+        const val TABLE_CHATS = "chats"
+        const val COL_CHAT_ID = "id"
+        const val COL_CHAT_PHONE = "phone_number"
+        const val COL_CHAT_LAST_MSG = "last_message"
+        const val COL_CHAT_TIME = "last_timestamp"
+        const val COL_CHAT_UNREAD = "unread_count"
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -44,8 +51,16 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 + "$COL_MSG_TYPE INTEGER, "
                 + "$COL_MSG_TIME TEXT)")
 
+        val createChatsTable = ("CREATE TABLE $TABLE_CHATS ("
+                + "$COL_CHAT_ID INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "$COL_CHAT_PHONE TEXT UNIQUE, "
+                + "$COL_CHAT_LAST_MSG TEXT, "
+                + "$COL_CHAT_TIME TEXT, "
+                + "$COL_CHAT_UNREAD INTEGER DEFAULT 0)")
+
         db.execSQL(createContactsTable)
         db.execSQL(createMessagesTable)
+        db.execSQL(createChatsTable)
 
     }
 
@@ -53,6 +68,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS $TABLE_CONTACTS")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_MESSAGES")
+        db.execSQL("DROP TABLE IF EXISTS $TABLE_CHATS")
         onCreate(db)
     }
 
@@ -69,6 +85,17 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         }
 
         val result = db.insert(TABLE_CONTACTS, null, values)
+
+        if (result != -1L) {
+            val chatValues = android.content.ContentValues().apply {
+                put(COL_CHAT_PHONE, contact.phone) // Chiave di collegamento
+                put(COL_CHAT_LAST_MSG, "") // Messaggio vuoto
+                put(COL_CHAT_TIME, System.currentTimeMillis().toString()) // Orario attuale
+                put(COL_CHAT_UNREAD, 0)
+            }
+
+            db.insertWithOnConflict(TABLE_CHATS, null, chatValues, SQLiteDatabase.CONFLICT_IGNORE)
+        }
 
         db.close()
 
@@ -118,5 +145,37 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return contactList
     }
 
+    fun getChatPreviews(): List<ChatPreview> {
+        val previewList = ArrayList<ChatPreview>()
+        val db = this.readableDatabase
+
+        val query = """
+            SELECT T1.$COL_CHAT_ID, T1.$COL_CHAT_PHONE, T1.$COL_CHAT_LAST_MSG, T1.$COL_CHAT_TIME, 
+                   T2.$COL_NAME, T2.$COL_IMAGE 
+            FROM $TABLE_CHATS T1 
+            LEFT JOIN $TABLE_CONTACTS T2 ON T1.$COL_CHAT_PHONE = T2.$COL_PHONE
+            ORDER BY T1.$COL_CHAT_TIME DESC 
+        """
+
+        val cursor = db.rawQuery(query, null)
+
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getInt(0) // T1.id
+                val phone = cursor.getString(1) // T1.phone
+                val msg = cursor.getString(2) // T1.last_message
+                val time = cursor.getString(3) // T1.time
+
+                val name = cursor.getString(4) ?: phone
+                val image = cursor.getString(5)
+
+                previewList.add(ChatPreview(id, name, phone, msg, time, image))
+
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        db.close()
+        return previewList
+    }
 }
 

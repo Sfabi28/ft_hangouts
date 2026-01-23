@@ -1,4 +1,10 @@
 package com.sfabi.ft_hangouts
 
-class ChatPreview {
-}
+data class ChatPreview(
+    val chatId: Int,
+    val contactName: String,
+    val phoneNumber: String,
+    val lastMessage: String,
+    val timestamp: String,
+    val imageUri: String?
+)
