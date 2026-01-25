@@ -21,6 +21,8 @@ class ChatActivity : AppCompatActivity() {
     private var contactName: String? = null
     private lateinit var btnBack: ImageButton
 
+    private lateinit var btnCall: ImageButton
+
     private lateinit var rvChat: RecyclerView
     private lateinit var etMessage: EditText
     private lateinit var btnSend: android.widget.ImageButton
@@ -51,6 +53,7 @@ class ChatActivity : AppCompatActivity() {
         etMessage = findViewById(R.id.etMessage)
         btnSend = findViewById(R.id.btnSend)
         btnBack = findViewById(R.id.btnBack)
+        btnCall = findViewById(R.id.btnCall)
 
         val tvHeaderName = findViewById<android.widget.TextView>(R.id.tvContactName)
         val imgHeaderAvatar = findViewById<android.widget.ImageView>(R.id.imgAvatar)
@@ -110,6 +113,10 @@ class ChatActivity : AppCompatActivity() {
 
         btnSend.setOnClickListener {
             sendMessage()
+        }
+
+        btnCall.setOnClickListener {
+            callContact()
         }
 
         ThemeUtils.applyHeaderColor(this)
@@ -179,6 +186,17 @@ class ChatActivity : AppCompatActivity() {
 
             etMessage.setText("")
             loadMessages()
+        }
+    }
+
+    private fun callContact() {
+        if (checkSelfPermission(android.Manifest.permission.CALL_PHONE) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+
+            val callIntent = android.content.Intent(android.content.Intent.ACTION_CALL)
+
+            callIntent.data = android.net.Uri.parse("tel:$contactNumber")
+
+            startActivity(callIntent)
         }
     }
 }
