@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import android.view.View
 
 
 class MainActivity : AppCompatActivity() {
@@ -43,10 +44,20 @@ class MainActivity : AppCompatActivity() {
         if (!hasPermissions()) {
             requestPermissions()
         }
+
+        val btnSettings = findViewById<View>(R.id.btnOptions)
+
+        btnSettings.setOnClickListener {
+            val intent = android.content.Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
+
+        ThemeUtils.applyHeaderColor(this)
     }
 
     override fun onResume() {
         super.onResume()
+        ThemeUtils.applyHeaderColor(this)
         if (hasPermissions()) {
             loadChats()
         }

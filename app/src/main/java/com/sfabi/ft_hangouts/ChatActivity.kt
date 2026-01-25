@@ -2,6 +2,7 @@ package com.sfabi.ft_hangouts
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.EditText
 import android.widget.ListView
@@ -38,6 +39,13 @@ class ChatActivity : AppCompatActivity() {
         if (contactNumber.isEmpty()) {
             finish()
             return
+        }
+
+        val btnSettings = findViewById<View>(R.id.btnOptions)
+
+        btnSettings.setOnClickListener {
+            val intent = android.content.Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
         }
 
         val contact = dbHelper.getContactByPhone(contactNumber)
@@ -78,11 +86,11 @@ class ChatActivity : AppCompatActivity() {
             finish()
         }
 
-        //ThemeUtils.applyHeaderColor(this)
+        ThemeUtils.applyHeaderColor(this)
     }
 
     override fun onResume() {
         super.onResume()
-        //ThemeUtils.applyHeaderColor(this)
+        ThemeUtils.applyHeaderColor(this)
     }
 }

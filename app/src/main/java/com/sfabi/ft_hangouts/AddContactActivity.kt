@@ -46,6 +46,8 @@ class AddContactActivity : AppCompatActivity() {
             getContent.launch("image/*")
         }
 
+        ThemeUtils.applyHeaderColor(this)
+
         btnSave.setOnClickListener {
             val name = etName.text.toString()
             val phone = etPhone.text.toString()
@@ -78,6 +80,11 @@ class AddContactActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ThemeUtils.applyHeaderColor(this)
     }
 
     private fun saveImageToInternalStorage(context: Context, uri: Uri): String? {
