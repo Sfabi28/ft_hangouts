@@ -9,6 +9,7 @@ import android.widget.EditText
 import androidx.recyclerview.widget.LinearLayoutManager
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
+import android.telephony.SmsManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ChatActivity : AppCompatActivity() {
@@ -29,6 +30,12 @@ class ChatActivity : AppCompatActivity() {
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LanguageUtils.onAttach(newBase))
+    }
+
+    private val chatUpdateReceiver = object : android.content.BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            loadMessages()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -116,43 +123,62 @@ class ChatActivity : AppCompatActivity() {
             recreate()
         } else {
             ThemeUtils.applyHeaderColor(this)
+
+            val filter = android.content.IntentFilter("com.sfabi.ft_hangouts.UPDATE_CHAT")
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                registerReceiver(chatUpdateReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
+            } else {
+                registerReceiver(chatUpdateReceiver, filter)
+            }
+
+            loadMessages()
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        try {
+            unregisterReceiver(chatUpdateReceiver)
+        } catch (e: Exception) {
+        }
+    }
     private fun setupRecyclerView() {
         val layoutManager = LinearLayoutManager(this)
-        layoutManager.stackFromEnd = true // I messaggi partono dal basso
+        layoutManager.stackFromEnd = true
         rvChat.layoutManager = layoutManager
 
-        // Creiamo l'adapter
         messageAdapter = MessageAdapter(this, messageList)
         rvChat.adapter = messageAdapter
 
-        // Carichiamo i dati
         loadMessages()
     }
 
     private fun loadMessages() {
-        // Chiamiamo la funzione del DB che hai creato poco fa
         messageList = dbHelper.getMessages(contactNumber) as ArrayList<Message>
 
-        // Aggiorniamo l'adapter
         messageAdapter.updateMessages(messageList)
 
-        // Scorriamo in fondo se ci sono messaggi
         if (messageList.isNotEmpty()) {
             rvChat.scrollToPosition(messageList.size - 1)
         }
     }
 
     private fun sendMessage() {
+        val smsManager: android.telephony.SmsManager = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            this.getSystemService(android.telephony.SmsManager::class.java)
+        } else {
+            android.telephony.SmsManager.getDefault()
+        }
+
         val text = etMessage.text.toString().trim()
         if (text.isNotEmpty()) {
-            // 1 = Messaggio inviato da me
             dbHelper.addMessage(contactNumber, text, 1)
 
-            etMessage.setText("") // Pulisci campo
-            loadMessages() // Ricarica la lista per vedere la nuova bolla
+            smsManager.sendTextMessage(contactNumber, null, text, null, null)
+
+            etMessage.setText("")
+            loadMessages()
         }
     }
 }
