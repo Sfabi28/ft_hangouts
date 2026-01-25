@@ -6,8 +6,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.EditText
-import android.widget.ListView
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.widget.ImageButton
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ChatActivity : AppCompatActivity() {
@@ -19,9 +20,12 @@ class ChatActivity : AppCompatActivity() {
     private var contactName: String? = null
     private lateinit var btnBack: ImageButton
 
-    private lateinit var lvMessages: ListView
+    private lateinit var rvChat: RecyclerView
     private lateinit var etMessage: EditText
     private lateinit var btnSend: android.widget.ImageButton
+
+    private lateinit var messageAdapter: MessageAdapter
+    private var messageList = ArrayList<Message>()
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LanguageUtils.onAttach(newBase))
@@ -36,7 +40,7 @@ class ChatActivity : AppCompatActivity() {
 
         dbHelper = DatabaseHelper(this)
 
-        lvMessages = findViewById(R.id.lvMessages)
+        rvChat = findViewById(R.id.rvChat)
         etMessage = findViewById(R.id.etMessage)
         btnSend = findViewById(R.id.btnSend)
         btnBack = findViewById(R.id.btnBack)
@@ -91,8 +95,14 @@ class ChatActivity : AppCompatActivity() {
             imgHeaderAvatar.setImageResource(android.R.drawable.sym_def_app_icon)
         }
 
+        setupRecyclerView()
+
         btnBack.setOnClickListener {
             finish()
+        }
+
+        btnSend.setOnClickListener {
+            sendMessage()
         }
 
         ThemeUtils.applyHeaderColor(this)
@@ -106,6 +116,43 @@ class ChatActivity : AppCompatActivity() {
             recreate()
         } else {
             ThemeUtils.applyHeaderColor(this)
+        }
+    }
+
+    private fun setupRecyclerView() {
+        val layoutManager = LinearLayoutManager(this)
+        layoutManager.stackFromEnd = true // I messaggi partono dal basso
+        rvChat.layoutManager = layoutManager
+
+        // Creiamo l'adapter
+        messageAdapter = MessageAdapter(this, messageList)
+        rvChat.adapter = messageAdapter
+
+        // Carichiamo i dati
+        loadMessages()
+    }
+
+    private fun loadMessages() {
+        // Chiamiamo la funzione del DB che hai creato poco fa
+        messageList = dbHelper.getMessages(contactNumber) as ArrayList<Message>
+
+        // Aggiorniamo l'adapter
+        messageAdapter.updateMessages(messageList)
+
+        // Scorriamo in fondo se ci sono messaggi
+        if (messageList.isNotEmpty()) {
+            rvChat.scrollToPosition(messageList.size - 1)
+        }
+    }
+
+    private fun sendMessage() {
+        val text = etMessage.text.toString().trim()
+        if (text.isNotEmpty()) {
+            // 1 = Messaggio inviato da me
+            dbHelper.addMessage(contactNumber, text, 1)
+
+            etMessage.setText("") // Pulisci campo
+            loadMessages() // Ricarica la lista per vedere la nuova bolla
         }
     }
 }

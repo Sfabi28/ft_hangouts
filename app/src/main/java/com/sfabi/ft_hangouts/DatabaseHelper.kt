@@ -3,6 +3,7 @@ package com.sfabi.ft_hangouts
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import org.w3c.dom.Text
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
@@ -31,6 +32,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         const val COL_CHAT_LAST_MSG = "last_message"
         const val COL_CHAT_TIME = "last_timestamp"
         const val COL_CHAT_UNREAD = "unread_count"
+
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -145,6 +147,55 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return contactList
     }
 
+    fun addMessage(number: String, text: String, sender: Int) {
+        val db = this.writableDatabase
+        val time = System.currentTimeMillis().toString()
+
+        val values = android.content.ContentValues().apply {
+            put(COL_MSG_PHONE, number)
+            put(COL_MSG_BODY, text)
+            put(COL_MSG_TYPE, sender)
+            put(COL_MSG_TIME, time)
+        }
+
+        val result = db.insert(TABLE_MESSAGES, null, values)
+
+        val chatValues = android.content.ContentValues().apply {
+            put(COL_CHAT_LAST_MSG, text)
+            put(COL_CHAT_TIME, time)
+        }
+
+        val rows = db.update(TABLE_CHATS, chatValues, "$COL_CHAT_PHONE = ?", arrayOf(number))
+        if (rows == 0) {
+            chatValues.put(COL_CHAT_PHONE, number) // Aggiungiamo il numero per la nuova riga
+            db.insert(TABLE_CHATS, null, chatValues)
+        }
+    }
+
+    fun getMessages(number: String): List<Message> {
+        val messagesList = ArrayList<Message>()
+        val db = this.readableDatabase
+
+        val query = "SELECT * FROM $TABLE_MESSAGES WHERE $COL_MSG_PHONE = ? ORDER BY $COL_MSG_TIME ASC"
+
+        val cursor = db.rawQuery(query, arrayOf(number))
+
+        if (cursor.moveToFirst()) {
+            do {
+                val id = cursor.getInt(cursor.getColumnIndexOrThrow(COL_MSG_ID))
+                val phone = cursor.getString(cursor.getColumnIndexOrThrow(COL_MSG_PHONE))
+                val body = cursor.getString(cursor.getColumnIndexOrThrow(COL_MSG_BODY))
+                val type = cursor.getInt(cursor.getColumnIndexOrThrow(COL_MSG_TYPE))
+                val time = cursor.getString(cursor.getColumnIndexOrThrow(COL_MSG_TIME))
+
+                messagesList.add(Message(id, phone, body, type, time))
+
+            } while (cursor.moveToNext())
+        }
+
+        cursor.close()
+        return messagesList
+    }
     fun getChatPreviews(): List<ChatPreview> {
         val previewList = ArrayList<ChatPreview>()
         val db = this.readableDatabase
