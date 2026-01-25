@@ -4,15 +4,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/header_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_alignParentTop="true">
 
-        <include layout="@layout/header" />
+        <include
+            android:id="@+id/header"
+            layout="@layout/header" />
 
-    </FrameLayout>
+        <include
+            android:id="@+id/search_bar_included"
+            layout="@layout/searchbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
 
     <ListView
         android:id="@+id/listViewContacts"

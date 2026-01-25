@@ -22,36 +22,20 @@ object ThemeUtils {
     }
 
     fun applyHeaderColor(activity: Activity) {
-        val headerBar = activity.findViewById<View>(R.id.header_bar)
-
-        if (headerBar != null) {
-            val colorString = getHeaderColor(activity)
-            try {
-                headerBar.setBackgroundColor(Color.parseColor(colorString))
-            } catch (e: Exception) {
-                headerBar.setBackgroundColor(Color.BLACK)
-            }
+        val colorString = getHeaderColor(activity)
+        val colorInt = try {
+            Color.parseColor(colorString)
+        } catch (e: Exception) {
+            Color.BLACK
         }
-    }
 
-    fun applyThemeToChat(activity: Activity) {
         val headerBar = activity.findViewById<View>(R.id.header_bar)
-        val headerColorStr = getHeaderColor(activity)
-        val headerColorInt = try { Color.parseColor(headerColorStr) } catch (e: Exception) { Color.BLACK }
+        headerBar?.setBackgroundColor(colorInt)
 
-        headerBar?.setBackgroundColor(headerColorInt)
+        val searchBarContainer = activity.findViewById<View>(R.id.searching_bar)
+        searchBarContainer?.setBackgroundColor(colorInt)
 
-        val contactInfoBar = activity.findViewById<View>(R.id.incContactInfo)
-
-        if (contactInfoBar != null) {
-            val r = Color.red(headerColorInt)
-            val g = Color.green(headerColorInt)
-            val b = Color.blue(headerColorInt)
-
-            val newAlpha = 220
-            val subBarColor = Color.argb(newAlpha, r, g, b)
-
-            contactInfoBar.setBackgroundColor(subBarColor)
-        }
+        val contactInfo = activity.findViewById<View>(R.id.incContactInfo)
+        contactInfo?.setBackgroundColor(colorInt)
     }
 }

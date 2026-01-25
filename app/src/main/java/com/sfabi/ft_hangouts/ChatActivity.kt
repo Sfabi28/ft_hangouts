@@ -77,10 +77,12 @@ class ChatActivity : AppCompatActivity() {
         btnBack.setOnClickListener {
             finish()
         }
+
+        //ThemeUtils.applyHeaderColor(this)
     }
 
     override fun onResume() {
         super.onResume()
-        ThemeUtils.applyThemeToChat(this)
+        //ThemeUtils.applyHeaderColor(this)
     }
 }
