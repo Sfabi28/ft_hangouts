@@ -1,3 +1,30 @@
 <resources>
-    <string name="app_name">ft_hangouts</string>
+    <string name="app_name">FT_HANGOUTS</string>
+
+    <string name="info_toast">Name and Phone are required!</string>
+    <string name="good_toast">Contact Saved!</string>
+    <string name="bad_toast">Error while saving contact</string>
+    <string name="permission_toast">The app cannot function without permissions!</string>
+
+    <string name="new_chat_text">Tap to start chatting</string>
+    <string name="last_message">Last message</string>
+    <string name="find_hint">Find Contact</string>
+
+    <string name="new_contact">New Contact</string>
+    <string name="name">Name</string>
+    <string name="number">Phone Number</string>
+    <string name="email">Email</string>
+    <string name="address">Address</string>
+    <string name="notes">Notes</string>
+    <string name="btn_save">Save Contact</string>
+    <string name="save">SAVE CONTACT</string>
+    <string name="type">Type a message</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings">Settings</string>
+    <string name="app_color">App Color</string>
+    <string name="language_title">Language</string>
+    <string name="langIt">Italian</string>
+    <string name="langEn">English</string>
+
 </resources>

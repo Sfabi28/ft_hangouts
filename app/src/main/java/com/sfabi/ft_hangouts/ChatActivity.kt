@@ -1,6 +1,7 @@
 package com.sfabi.ft_hangouts
 
 import android.content.Intent
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ChatActivity : AppCompatActivity() {
 
+    private var currentLanguageCode: String? = null
     private lateinit var dbHelper: DatabaseHelper
 
     private lateinit var contactNumber: String
@@ -21,9 +23,16 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var etMessage: EditText
     private lateinit var btnSend: android.widget.ImageButton
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LanguageUtils.onAttach(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_chat)
+
+        currentLanguageCode = LanguageUtils.getLanguage(this)
 
         dbHelper = DatabaseHelper(this)
 
@@ -91,6 +100,12 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        ThemeUtils.applyHeaderColor(this)
+
+        val savedLanguage = LanguageUtils.getLanguage(this)
+        if (currentLanguageCode != null && currentLanguageCode != savedLanguage) {
+            recreate()
+        } else {
+            ThemeUtils.applyHeaderColor(this)
+        }
     }
 }

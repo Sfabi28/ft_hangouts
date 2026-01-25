@@ -22,7 +22,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nuovo Contatto"
+                android:text="@string/new_contact"
                 android:textSize="24sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="20dp"/>
@@ -50,42 +50,42 @@
                 android:id="@+id/etName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Nome"
+                android:hint="@string/name"
                 android:inputType="textPersonName"/>
 
             <EditText
                 android:id="@+id/etPhone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Numero di Telefono"
+                android:hint="@string/number"
                 android:inputType="phone"/>
 
             <EditText
                 android:id="@+id/etEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Email"
+                android:hint="@string/email"
                 android:inputType="textEmailAddress"/>
 
             <EditText
                 android:id="@+id/etAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Indirizzo"
+                android:hint="@string/address"
                 android:inputType="textPostalAddress"/>
 
             <EditText
                 android:id="@+id/etNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Note"
+                android:hint="@string/notes"
                 android:inputType="textMultiLine"/>
 
             <Button
                 android:id="@+id/btnSave"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="SALVA CONTATTO"
+                android:text="@string/save"
                 android:backgroundTint="#009688"
                 android:layout_marginTop="30dp"/>
 

@@ -15,6 +15,7 @@ import java.io.InputStream
 
 class AddContactActivity : AppCompatActivity() {
 
+    private var currentLanguageCode: String? = null
     private lateinit var dbHelper: DatabaseHelper
 
     private var selectedImageUri: Uri? = null
@@ -28,9 +29,16 @@ class AddContactActivity : AppCompatActivity() {
         }
     }
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LanguageUtils.onAttach(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_add_contact)
+
+        currentLanguageCode = LanguageUtils.getLanguage(this)
 
         dbHelper = DatabaseHelper(this)
 
@@ -56,7 +64,7 @@ class AddContactActivity : AppCompatActivity() {
             val note = etNote.text.toString()
 
             if (name.isEmpty() || phone.isEmpty()) {
-                Toast.makeText(this, "Nome e Telefono sono obbligatori!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "@string/info_toast", Toast.LENGTH_SHORT).show()
             } else {
 
                 var imagePathToSave = ""
@@ -73,10 +81,10 @@ class AddContactActivity : AppCompatActivity() {
                 val result = dbHelper.addContact(contact)
 
                 if (result > -1) {
-                    Toast.makeText(this, "Contatto salvato!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "@string/good_toast", Toast.LENGTH_SHORT).show()
                     finish()
                 } else {
-                    Toast.makeText(this, "Errore nel salvataggio", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "@string/bad_toast", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -84,7 +92,13 @@ class AddContactActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        ThemeUtils.applyHeaderColor(this)
+
+        val savedLanguage = LanguageUtils.getLanguage(this)
+        if (currentLanguageCode != null && currentLanguageCode != savedLanguage) {
+            recreate()
+        } else {
+            ThemeUtils.applyHeaderColor(this)
+        }
     }
 
     private fun saveImageToInternalStorage(context: Context, uri: Uri): String? {

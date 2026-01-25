@@ -72,5 +72,17 @@ object ThemeUtils {
             btnSave.setTextColor(textColorInt)
         }
 
+        val btnEn = activity.findViewById<android.widget.Button>(R.id.btnEn)
+        if (btnEn != null) {
+            btnEn.backgroundTintList = android.content.res.ColorStateList.valueOf(backgroundColorInt)
+            btnEn.setTextColor(textColorInt)
+        }
+
+        val btnIt = activity.findViewById<android.widget.Button>(R.id.btnIt)
+        if (btnIt != null) {
+            btnIt.backgroundTintList = android.content.res.ColorStateList.valueOf(backgroundColorInt)
+            btnIt.setTextColor(textColorInt)
+        }
+
     }
 }

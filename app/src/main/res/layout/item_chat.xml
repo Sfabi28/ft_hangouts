@@ -25,7 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/cardAvatar"
         android:layout_marginStart="16dp"
-        android:text="Nome Contatto"
+        android:text="@string/name"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="?android:attr/textColorPrimary" />
@@ -48,7 +48,7 @@
         android:layout_toStartOf="@id/tvTimestamp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="4dp"
-        android:text="Ultimo messaggio..."
+        android:text="@string/last_message"
         android:maxLines="1"
         android:ellipsize="end"
         android:textSize="14sp"

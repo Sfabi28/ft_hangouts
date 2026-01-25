@@ -37,7 +37,7 @@
 
         android:background="@drawable/bg_search_rounded"
 
-        android:hint="Find Contact..."
+        android:hint="@string/find_hint"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
 

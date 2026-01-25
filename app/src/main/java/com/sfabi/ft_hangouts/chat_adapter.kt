@@ -32,7 +32,7 @@ class ChatAdapter(private val context: Context, private val chatList: List<ChatP
         tvName.text = chat.contactName
 
         if (chat.lastMessage.isEmpty()) {
-            tvMessage.text = "Tocca per iniziare a scrivere..."
+            tvMessage.text = context.getString(R.string.new_chat_text)
             tvMessage.setTypeface(null, android.graphics.Typeface.ITALIC)
         } else {
             tvMessage.text = chat.lastMessage

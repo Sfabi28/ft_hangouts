@@ -9,6 +9,7 @@ import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import android.content.Context
 import androidx.core.content.ContextCompat
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import android.view.View
@@ -27,9 +28,18 @@ class MainActivity : AppCompatActivity() {
         Manifest.permission.CALL_PHONE
     )
 
+    private var currentLanguageCode: String? = null
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LanguageUtils.onAttach(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
+
+        currentLanguageCode = LanguageUtils.getLanguage(this)
 
         dbHelper = DatabaseHelper(this)
 
@@ -57,9 +67,18 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        ThemeUtils.applyHeaderColor(this)
-        if (hasPermissions()) {
-            loadChats()
+
+        val savedLanguage = LanguageUtils.getLanguage(this)
+
+        if (currentLanguageCode != null && currentLanguageCode != savedLanguage) {
+            recreate()
+
+        } else {
+            ThemeUtils.applyHeaderColor(this)
+
+            if (hasPermissions()) {
+                loadChats()
+            }
         }
     }
 
@@ -87,7 +106,7 @@ class MainActivity : AppCompatActivity() {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                 loadChats()
             } else {
-                Toast.makeText(this, "Senza permessi l'app non può funzionare!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "@string/permission_toast", Toast.LENGTH_LONG).show()
             }
         }
     }

@@ -3,11 +3,17 @@ package com.sfabi.ft_hangouts
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
 
 class SettingsActivity : AppCompatActivity() {
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(LanguageUtils.onAttach(newBase))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.settings)
 
         ThemeUtils.applyHeaderColor(this)
@@ -25,6 +31,8 @@ class SettingsActivity : AppCompatActivity() {
         setupColorButton(R.id.btnColor6, "#FF00FF") // Magenta
         setupColorButton(R.id.btnColor7, "#000000") // Nero
         setupColorButton(R.id.btnColor8, "#FFFFFF") // Bianco
+        setUpLanguageButton(R.id.btnEn, "en")
+        setUpLanguageButton(R.id.btnIt, "it")
     }
 
     private fun setupColorButton(btnId: Int, colorHex: String) {
@@ -33,6 +41,15 @@ class SettingsActivity : AppCompatActivity() {
             ThemeUtils.saveHeaderColor(this, colorHex)
 
             ThemeUtils.applyHeaderColor(this)
+        }
+    }
+
+    private fun setUpLanguageButton(btnId: Int, language: String) {
+        val button = findViewById<View>(btnId)
+        button.setOnClickListener {
+            LanguageUtils.saveLanguage(this, language)
+
+            recreate()
         }
     }
 
