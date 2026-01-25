@@ -6,5 +6,6 @@ data class ChatPreview(
     val phoneNumber: String,
     val lastMessage: String,
     val timestamp: String,
-    val imageUri: String?
+    val imageUri: String?,
+    val unreadCount: Int = 0
 )

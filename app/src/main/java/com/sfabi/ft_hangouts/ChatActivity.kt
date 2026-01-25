@@ -45,6 +45,12 @@ class ChatActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_chat)
 
+        val phoneNumber = intent.getStringExtra("key_phone");
+        if (phoneNumber != null) {
+            val dbHelper = DatabaseHelper(this)
+            dbHelper.markChatAsRead(phoneNumber)
+        }
+
         currentLanguageCode = LanguageUtils.getLanguage(this)
 
         dbHelper = DatabaseHelper(this)

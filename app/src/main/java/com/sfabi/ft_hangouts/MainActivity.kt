@@ -1,7 +1,9 @@
 package com.sfabi.ft_hangouts
 
 import android.Manifest
+import android.content.BroadcastReceiver
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.ArrayAdapter
@@ -29,6 +31,14 @@ class MainActivity : AppCompatActivity() {
     )
 
     private var currentLanguageCode: String? = null
+
+    private val updateChatReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent?.action == "com.sfabi.ft_hangouts.UPDATE_CHAT") {
+                loadChats()
+            }
+        }
+    }
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(LanguageUtils.onAttach(newBase))
@@ -63,6 +73,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         ThemeUtils.applyHeaderColor(this)
+
+        val filter = IntentFilter("com.sfabi.ft_hangouts.UPDATE_CHAT")
+        ContextCompat.registerReceiver(this, updateChatReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
     }
 
     override fun onResume() {
@@ -72,7 +85,6 @@ class MainActivity : AppCompatActivity() {
 
         if (currentLanguageCode != null && currentLanguageCode != savedLanguage) {
             recreate()
-
         } else {
             ThemeUtils.applyHeaderColor(this)
 
@@ -80,6 +92,11 @@ class MainActivity : AppCompatActivity() {
                 loadChats()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(updateChatReceiver)
     }
 
     private fun hasPermissions(): Boolean {

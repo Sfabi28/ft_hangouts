@@ -8,7 +8,7 @@ import org.w3c.dom.Text
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
         private const val DATABASE_NAME = "ft_hangouts.db"
-        private const val DATABASE_VERSION = 5
+        private const val DATABASE_VERSION = 10
 
         const val TABLE_CONTACTS = "contacts"
         const val COL_ID = "id"
@@ -66,7 +66,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     }
 
-    //DA RIGUARDARE LA PARTE DEL DROP forse devo usare ALTER
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         db.execSQL("DROP TABLE IF EXISTS $TABLE_CONTACTS")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_MESSAGES")
@@ -147,29 +146,45 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return contactList
     }
 
-    fun addMessage(number: String, text: String, sender: Int) {
+    fun addMessage(number: String, text: String, type: Int) {
         val db = this.writableDatabase
         val time = System.currentTimeMillis().toString()
 
-        val values = android.content.ContentValues().apply {
+        // Insert the message
+        val messageValues = android.content.ContentValues().apply {
             put(COL_MSG_PHONE, number)
             put(COL_MSG_BODY, text)
-            put(COL_MSG_TYPE, sender)
+            put(COL_MSG_TYPE, type)
             put(COL_MSG_TIME, time)
         }
+        db.insert(TABLE_MESSAGES, null, messageValues)
 
-        val result = db.insert(TABLE_MESSAGES, null, values)
-
-        val chatValues = android.content.ContentValues().apply {
+        // Prepare values for chat update
+        val chatUpdateValues = android.content.ContentValues().apply {
             put(COL_CHAT_LAST_MSG, text)
             put(COL_CHAT_TIME, time)
         }
 
-        val rows = db.update(TABLE_CHATS, chatValues, "$COL_CHAT_PHONE = ?", arrayOf(number))
-        if (rows == 0) {
-            chatValues.put(COL_CHAT_PHONE, number) // Aggiungiamo il numero per la nuova riga
-            db.insert(TABLE_CHATS, null, chatValues)
+        // Try to update existing chat
+        val rowsAffected = db.update(TABLE_CHATS, chatUpdateValues, "$COL_CHAT_PHONE = ?", arrayOf(number))
+
+        // If it's a received message and chat was updated, increment unread count
+        if (rowsAffected > 0 && type == 2) {
+            db.execSQL("UPDATE $TABLE_CHATS SET $COL_CHAT_UNREAD = $COL_CHAT_UNREAD + 1 WHERE $COL_CHAT_PHONE = ?", arrayOf(number))
         }
+
+        // If no chat was updated (i.e., it doesn't exist), create it
+        if (rowsAffected == 0) {
+            val newChatValues = android.content.ContentValues().apply {
+                put(COL_CHAT_PHONE, number)
+                put(COL_CHAT_LAST_MSG, text)
+                put(COL_CHAT_TIME, time)
+                put(COL_CHAT_UNREAD, if (type == 2) 1 else 0) // Set initial unread count
+            }
+            db.insert(TABLE_CHATS, null, newChatValues)
+        }
+
+        db.close()
     }
 
     fun getMessages(number: String): List<Message> {
@@ -196,13 +211,21 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         cursor.close()
         return messagesList
     }
+
+    fun markChatAsRead(phoneNumber: String) {
+        val db = this.writableDatabase
+        val values = android.content.ContentValues().apply {
+            put(COL_CHAT_UNREAD, 0)
+        }
+        db.update(TABLE_CHATS, values, "$COL_CHAT_PHONE = ?", arrayOf(phoneNumber))
+    }
     fun getChatPreviews(): List<ChatPreview> {
         val previewList = ArrayList<ChatPreview>()
         val db = this.readableDatabase
 
         val query = """
             SELECT T1.$COL_CHAT_ID, T1.$COL_CHAT_PHONE, T1.$COL_CHAT_LAST_MSG, T1.$COL_CHAT_TIME, 
-                   T2.$COL_NAME, T2.$COL_IMAGE 
+                   T2.$COL_NAME, T2.$COL_IMAGE, T1.$COL_CHAT_UNREAD 
             FROM $TABLE_CHATS T1 
             LEFT JOIN $TABLE_CONTACTS T2 ON T1.$COL_CHAT_PHONE = T2.$COL_PHONE
             ORDER BY T1.$COL_CHAT_TIME DESC 
@@ -220,12 +243,13 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 val name = cursor.getString(4) ?: phone
                 val image = cursor.getString(5)
 
-                previewList.add(ChatPreview(id, name, phone, msg, time, image))
+                val unreadCount = cursor.getInt(6)
+
+                previewList.add(ChatPreview(id, name, phone, msg, time, image, unreadCount))
 
             } while (cursor.moveToNext())
         }
         cursor.close()
-        db.close()
         return previewList
     }
 
@@ -252,4 +276,3 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         return contact
     }
 }
-

@@ -10,32 +10,40 @@ class SmsReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
 
-            val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
-
-            if (messages != null) {
+            try {
+                val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
                 val dbHelper = DatabaseHelper(context)
 
                 for (sms in messages) {
-                    val rawSender = sms.displayOriginatingAddress ?: "Sconosciuto"
+                    var rawSender = sms.displayOriginatingAddress ?: "Sconosciuto"
                     val messageBody = sms.messageBody ?: ""
 
-                    var finalSender = rawSender
+                    val allContacts = dbHelper.getAllContacts()
+                    val matchingContact = allContacts.firstOrNull { contact ->
+                        val cleanRawSender = rawSender.filter { it.isDigit() }
+                        val cleanContactPhone = contact.phone.filter { it.isDigit() }
+                        cleanRawSender.endsWith(cleanContactPhone) || cleanContactPhone.endsWith(cleanRawSender)
+                    }
 
-                    if (dbHelper.getContactByPhone(rawSender) == null) {
-
+                    val finalSender = if (matchingContact != null) {
+                        matchingContact.phone
+                    } else {
                         if (rawSender.startsWith("+39")) {
-                            val numberWithoutPrefix = rawSender.substring(3)
-
-                            if (dbHelper.getContactByPhone(numberWithoutPrefix) != null) {
-                                finalSender = numberWithoutPrefix
-                            }
+                            rawSender.substring(3)
+                        } else {
+                            rawSender
                         }
                     }
+
                     dbHelper.addMessage(finalSender, messageBody, 2)
 
                     val updateIntent = Intent("com.sfabi.ft_hangouts.UPDATE_CHAT")
+                    updateIntent.setPackage(context.packageName)
                     context.sendBroadcast(updateIntent)
                 }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }

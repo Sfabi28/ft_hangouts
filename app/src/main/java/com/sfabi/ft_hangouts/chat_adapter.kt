@@ -28,15 +28,37 @@ class ChatAdapter(private val context: Context, private val chatList: List<ChatP
         val tvMessage = view.findViewById<TextView>(R.id.tvLastMessage)
         val tvTime = view.findViewById<TextView>(R.id.tvTimestamp)
         val imgAvatar = view.findViewById<ImageView>(R.id.imgAvatar)
+        val tvUnreadBadge = view.findViewById<TextView>(R.id.tvUnreadBadge)
 
         tvName.text = chat.contactName
 
+        // Set message text first
         if (chat.lastMessage.isEmpty()) {
             tvMessage.text = context.getString(R.string.new_chat_text)
-            tvMessage.setTypeface(null, android.graphics.Typeface.ITALIC)
         } else {
             tvMessage.text = chat.lastMessage
-            tvMessage.setTypeface(null, android.graphics.Typeface.NORMAL)
+        }
+
+        // Apply styles based on read/unread state
+        if (chat.unreadCount > 0) {
+            tvUnreadBadge.visibility = View.VISIBLE
+            tvUnreadBadge.text = chat.unreadCount.toString()
+            tvName.setTypeface(null, android.graphics.Typeface.BOLD)
+
+            if (chat.lastMessage.isEmpty()) {
+                tvMessage.setTypeface(null, android.graphics.Typeface.ITALIC)
+            } else {
+                tvMessage.setTypeface(null, android.graphics.Typeface.BOLD)
+            }
+        } else {
+            tvUnreadBadge.visibility = View.GONE
+            tvName.setTypeface(null, android.graphics.Typeface.NORMAL)
+
+            if (chat.lastMessage.isEmpty()) {
+                tvMessage.setTypeface(null, android.graphics.Typeface.ITALIC)
+            } else {
+                tvMessage.setTypeface(null, android.graphics.Typeface.NORMAL)
+            }
         }
 
         if (chat.timestamp.isNotEmpty()) {
