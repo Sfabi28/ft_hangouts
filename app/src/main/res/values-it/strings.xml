@@ -12,6 +12,7 @@
     <string name="find_hint">Cerca Contatto</string>
 
     <string name="new_contact">Nuovo Contatto</string>
+    <string name="modify_contact">Modifica Contatto</string>
     <string name="name">Nome</string>
     <string name="number">Numero di Telefono</string>
     <string name="email">Email</string>
@@ -19,6 +20,7 @@
     <string name="notes">Note</string>
     <string name="btn_save">Salva Contatto</string>
     <string name="save">SALVA CONTATTO</string>
+    <string name="delete">ELIMINA CONTATTO</string>
     <string name="type">Scrivi un messaggio</string>
 
     <string name="settings_title">Impostazioni</string>
@@ -27,5 +29,17 @@
     <string name="language_title">Lingua</string>
     <string name="langIt">Italiano</string>
     <string name="langEn">Inglese</string>
+
+    <string name="delete_title">Elimina Contatto</string>
+    <string name="delete_confirm">Sei sicuro di voler eliminare </string>
+    <string name="yes">Si</string>
+    <string name="no">No</string>
+    <string name="deleted_success">Contatto eliminato con successo</string>
+    <string name="delete_chat_title">Elimina Chat</string>
+    <string name="delete_chat_confirm">Sei sicuro di voler eliminare la chat?</string>
+    <string name="chat_deleted_success">Chat eliminata con successo</string>
+    <string name="phone_not_available">Non e\' possibile eliminare questa chat</string>
+    <string name="phone_exists">Numero di telefono gia\' salvato</string>
+    <string name="toast_time">App riaperta! Era in background dalle</string>
 
 </resources>

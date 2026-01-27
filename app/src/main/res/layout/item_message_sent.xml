@@ -16,7 +16,6 @@
         android:background="@drawable/bubble_sent"
         android:padding="12dp"
         android:text="Messaggio di prova molto lungo per vedere come va a capo"
-        android:textColor="#FFFFFF"
         android:textSize="16sp"
 
         app:layout_constrainedWidth="true"

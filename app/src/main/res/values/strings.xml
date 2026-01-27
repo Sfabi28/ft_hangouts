@@ -11,6 +11,7 @@
     <string name="find_hint">Find Contact</string>
 
     <string name="new_contact">New Contact</string>
+    <string name="modify_contact">Update Contact</string>
     <string name="name">Name</string>
     <string name="number">Phone Number</string>
     <string name="email">Email</string>
@@ -18,6 +19,7 @@
     <string name="notes">Notes</string>
     <string name="btn_save">Save Contact</string>
     <string name="save">SAVE CONTACT</string>
+    <string name="delete">DELETE CONTACT</string>
     <string name="type">Type a message</string>
 
     <string name="settings_title">Settings</string>
@@ -26,5 +28,18 @@
     <string name="language_title">Language</string>
     <string name="langIt">Italian</string>
     <string name="langEn">English</string>
+
+    <string name="delete_title">Delete Contact</string>
+    <string name="delete_confirm">Are you sure you want to delete </string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="deleted_success">Contact deleted successfully</string>
+
+    <string name="delete_chat_title">Delete Chat</string>
+    <string name="delete_chat_confirm">Are you sure you want to delete this chat history?</string>
+    <string name="chat_deleted_success">Chat deleted successfully</string>
+    <string name="phone_not_available">Phone number is not available to delete chat.</string>
+    <string name="phone_exists">Phone number already saved</string>
+    <string name="toast_time">App reopened! Has been in background since</string>
 
 </resources>

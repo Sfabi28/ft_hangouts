@@ -1,6 +1,7 @@
 package com.sfabi.ft_hangouts
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
@@ -40,18 +41,23 @@ class MessageAdapter(
         holder.tvTime.text = formatTime(message.timestamp)
 
         if (getItemViewType(position) == TYPE_SENT) {
-
             val colorString = ThemeUtils.getHeaderColor(context)
-
             val colorInt = try {
-                android.graphics.Color.parseColor(colorString)
+                Color.parseColor(colorString)
             } catch (e: Exception) {
-                android.graphics.Color.parseColor("#009688")
+                Color.parseColor("#000000")
             }
 
             val background = holder.tvBody.background.mutate() as GradientDrawable
-
             background.setColor(colorInt)
+
+            // Set text color based on background brightness
+            val darkness = 1 - (0.299 * Color.red(colorInt) + 0.587 * Color.green(colorInt) + 0.114 * Color.blue(colorInt)) / 255
+            if (darkness < 0.5) {
+                holder.tvBody.setTextColor(Color.BLACK)
+            } else {
+                holder.tvBody.setTextColor(Color.WHITE)
+            }
         }
     }
 
@@ -61,6 +67,7 @@ class MessageAdapter(
         this.messages = newMessages
         notifyDataSetChanged()
     }
+
     private fun formatTime(timestamp: String): String {
         return try {
             val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
@@ -70,6 +77,7 @@ class MessageAdapter(
             ""
         }
     }
+
     class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tvBody: TextView = itemView.findViewById(R.id.tvMessageBody)
         val tvTime: TextView = itemView.findViewById(R.id.tvMessageTime)

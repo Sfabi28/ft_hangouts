@@ -8,7 +8,7 @@ import org.w3c.dom.Text
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
         private const val DATABASE_NAME = "ft_hangouts.db"
-        private const val DATABASE_VERSION = 10
+        private const val DATABASE_VERSION = 12
 
         const val TABLE_CONTACTS = "contacts"
         const val COL_ID = "id"
@@ -275,4 +275,50 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         cursor.close()
         return contact
     }
+
+    fun updateContact(contact: Contact): Int {
+        val db = this.writableDatabase
+        val values = android.content.ContentValues().apply {
+            put(COL_NAME, contact.name)
+            put(COL_PHONE, contact.phone)
+            put(COL_EMAIL, contact.email)
+            put(COL_ADDRESS, contact.address)
+            put(COL_NOTE, contact.note)
+            put(COL_IMAGE, contact.imageUri)
+        }
+
+        return db.update(TABLE_CONTACTS, values, "$COL_ID = ?", arrayOf(contact.id.toString()))
+    }
+    fun deleteChat(phoneNumber: String) {
+        val db = this.writableDatabase
+        db.delete(TABLE_CHATS, "$COL_CHAT_PHONE = ?", arrayOf(phoneNumber))
+        db.delete(TABLE_MESSAGES, "$COL_MSG_PHONE = ?", arrayOf(phoneNumber))
+        db.close()
+    }
+
+    // In DatabaseHelper.kt
+
+    fun deleteContact(contactId: Int): Int {
+        val db = this.writableDatabase
+        var phone: String? = null
+
+        val cursor = db.query(TABLE_CONTACTS, arrayOf(COL_PHONE), "$COL_ID = ?", arrayOf(contactId.toString()), null, null, null)
+        if (cursor.moveToFirst()) {
+            phone = cursor.getString(cursor.getColumnIndexOrThrow(COL_PHONE))
+        }
+        cursor.close()
+
+        val deletedRows = db.delete(TABLE_CONTACTS, "$COL_ID = ?", arrayOf(contactId.toString()))
+
+        if (deletedRows > 0 && phone != null) {
+            deleteChat(phone) // Riusiamo la tua funzione esistente!
+        }
+
+        if (phone == null) {
+            db.close()
+        }
+
+        return deletedRows
+    }
+
 }

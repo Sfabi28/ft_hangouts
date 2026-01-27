@@ -49,7 +49,7 @@
                 app:cornerRadius="30dp"
                 app:strokeColor="#777777"
                 app:strokeWidth="2dp"
-                android:backgroundTint="#FF0000"
+                android:backgroundTint="#E57373"
                 android:layout_marginEnd="12dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp" />
@@ -61,7 +61,7 @@
                 app:cornerRadius="30dp"
                 app:strokeColor="#777777"
                 app:strokeWidth="2dp"
-                android:backgroundTint="#00FF00"
+                android:backgroundTint="#81C784"
                 android:layout_marginEnd="12dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp" />
@@ -73,7 +73,7 @@
                 app:cornerRadius="30dp"
                 app:strokeColor="#777777"
                 app:strokeWidth="2dp"
-                android:backgroundTint="#0000FF"
+                android:backgroundTint="#64B5F6"
                 android:layout_marginEnd="12dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp" />
@@ -85,7 +85,7 @@
                 app:cornerRadius="30dp"
                 app:strokeColor="#777777"
                 app:strokeWidth="2dp"
-                android:backgroundTint="#FFFF00"
+                android:backgroundTint="#FFD54F"
                 android:insetTop="0dp"
                 android:insetBottom="0dp" />
         </LinearLayout>
@@ -103,7 +103,7 @@
                 app:cornerRadius="30dp"
                 app:strokeColor="#777777"
                 app:strokeWidth="2dp"
-                android:backgroundTint="#00FFFF"
+                android:backgroundTint="#4DD0E1"
                 android:layout_marginEnd="12dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp" />
@@ -115,7 +115,7 @@
                 app:cornerRadius="30dp"
                 app:strokeColor="#777777"
                 app:strokeWidth="2dp"
-                android:backgroundTint="#FF00FF"
+                android:backgroundTint="#BA68C8"
                 android:layout_marginEnd="12dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp" />
@@ -127,7 +127,7 @@
                 app:cornerRadius="30dp"
                 app:strokeColor="#777777"
                 app:strokeWidth="2dp"
-                android:backgroundTint="#000000"
+                android:backgroundTint="#222222"
                 android:layout_marginEnd="12dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp" />
@@ -139,7 +139,7 @@
                 app:cornerRadius="30dp"
                 app:strokeColor="#777777"
                 app:strokeWidth="2dp"
-                android:backgroundTint="#FFFFFF"
+                android:backgroundTint="#E0E0E0"
                 android:insetTop="0dp"
                 android:insetBottom="0dp" />
         </LinearLayout>

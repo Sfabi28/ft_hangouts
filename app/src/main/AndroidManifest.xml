@@ -11,12 +11,13 @@
     <uses-feature android:name="android.hardware.telephony" android:required="true" />
 
     <application
-        android:allowBackup="true"
+        android:name=".MyApplication"
+        android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
-        android:label="FT_HANGOUTS"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:icon="@mipmap/icon"
+        android:label="ft_hangouts"
+        android:roundIcon="@mipmap/icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.Ft_hangouts">
 
@@ -26,12 +27,15 @@
 
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".ModifyContactActivity" />
 
         <receiver
             android:name=".SmsReceiver"

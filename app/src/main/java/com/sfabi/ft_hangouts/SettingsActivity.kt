@@ -23,14 +23,14 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        setupColorButton(R.id.btnColor1, "#FF0000") // Rosso
-        setupColorButton(R.id.btnColor2, "#00FF00") // Verde
-        setupColorButton(R.id.btnColor3, "#0000FF") // Blu
-        setupColorButton(R.id.btnColor4, "#FFFF00") // Giallo
-        setupColorButton(R.id.btnColor5, "#00FFFF") // Ciano
-        setupColorButton(R.id.btnColor6, "#FF00FF") // Magenta
-        setupColorButton(R.id.btnColor7, "#000000") // Nero
-        setupColorButton(R.id.btnColor8, "#FFFFFF") // Bianco
+        setupColorButton(R.id.btnColor1, "#E57373") // Rosso
+        setupColorButton(R.id.btnColor2, "#81C784") // Verde
+        setupColorButton(R.id.btnColor3, "#64B5F6") // Blu
+        setupColorButton(R.id.btnColor4, "#FFD54F") // Giallo
+        setupColorButton(R.id.btnColor5, "#4DD0E1") // Ciano
+        setupColorButton(R.id.btnColor6, "#BA68C8") // Magenta
+        setupColorButton(R.id.btnColor7, "#222222") // Nero
+        setupColorButton(R.id.btnColor8, "#E0E0E0") // Bianco
         setUpLanguageButton(R.id.btnEn, "en")
         setUpLanguageButton(R.id.btnIt, "it")
     }

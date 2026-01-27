@@ -36,6 +36,7 @@ class ChatActivity : AppCompatActivity() {
 
     private val chatUpdateReceiver = object : android.content.BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
+            refreshContactInfo()
             loadMessages()
         }
     }
@@ -44,12 +45,6 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_chat)
-
-        val phoneNumber = intent.getStringExtra("key_phone");
-        if (phoneNumber != null) {
-            val dbHelper = DatabaseHelper(this)
-            dbHelper.markChatAsRead(phoneNumber)
-        }
 
         currentLanguageCode = LanguageUtils.getLanguage(this)
 
@@ -106,8 +101,35 @@ class ChatActivity : AppCompatActivity() {
             } else {
                 imgHeaderAvatar.setImageResource(android.R.drawable.sym_def_app_icon)
             }
+
+            val btnContactInfo = findViewById<View>(R.id.btnContactInfo)
+            btnContactInfo.setOnClickListener {
+                val intent = Intent(this, ModifyContactActivity::class.java).apply {
+                    putExtra("CONTACT_ID", contact.id)
+                    putExtra("CONTACT_NAME", contact.name)
+                    putExtra("CONTACT_PHONE", contact.phone)
+                    putExtra("CONTACT_EMAIL", contact.email)
+                    putExtra("CONTACT_ADDRESS", contact.address)
+                    putExtra("CONTACT_NOTE", contact.note)
+                    putExtra("CONTACT_IMAGE", contact.imageUri)
+                }
+                startActivity(intent)
+            }
         } else {
             tvHeaderName.text = contactNumber
+            val btnContactInfo = findViewById<View>(R.id.btnContactInfo)
+            btnContactInfo.setOnClickListener {
+                val intent = Intent(this, ModifyContactActivity::class.java).apply {
+                    putExtra("CONTACT_ID", -1)
+                    putExtra("CONTACT_NAME", "")
+                    putExtra("CONTACT_PHONE", contactNumber)
+                    putExtra("CONTACT_EMAIL", "")
+                    putExtra("CONTACT_ADDRESS", "")
+                    putExtra("CONTACT_NOTE", "")
+                    putExtra("CONTACT_IMAGE", "")
+                }
+                startActivity(intent)
+            }
             imgHeaderAvatar.setImageResource(android.R.drawable.sym_def_app_icon)
         }
 
@@ -137,8 +159,9 @@ class ChatActivity : AppCompatActivity() {
         } else {
             ThemeUtils.applyHeaderColor(this)
 
-            val filter = android.content.IntentFilter("com.sfabi.ft_hangouts.UPDATE_CHAT")
+            refreshContactInfo()
 
+            val filter = android.content.IntentFilter("com.sfabi.ft_hangouts.UPDATE_CHAT")
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 registerReceiver(chatUpdateReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
             } else {
@@ -146,6 +169,42 @@ class ChatActivity : AppCompatActivity() {
             }
 
             loadMessages()
+        }
+    }
+    private fun refreshContactInfo() {
+        val updatedContact = dbHelper.getContactByPhone(contactNumber)
+
+        val tvHeaderName = findViewById<android.widget.TextView>(R.id.tvContactName)
+        val imgHeaderAvatar = findViewById<android.widget.ImageView>(R.id.imgAvatar)
+        val btnContactInfo = findViewById<android.view.View>(R.id.btnContactInfo)
+
+        if (updatedContact != null) {
+            tvHeaderName.text = updatedContact.name
+
+            val imagePath = updatedContact.imageUri
+            if (!imagePath.isNullOrEmpty()) {
+                val file = java.io.File(imagePath)
+                if (file.exists()) {
+                    imgHeaderAvatar.setImageURI(android.net.Uri.fromFile(file))
+                } else {
+                    imgHeaderAvatar.setImageResource(android.R.drawable.sym_def_app_icon)
+                }
+            } else {
+                imgHeaderAvatar.setImageResource(android.R.drawable.sym_def_app_icon)
+            }
+
+            btnContactInfo.setOnClickListener {
+                val intent = android.content.Intent(this, ModifyContactActivity::class.java).apply {
+                    putExtra("CONTACT_ID", updatedContact.id)
+                    putExtra("CONTACT_NAME", updatedContact.name)
+                    putExtra("CONTACT_PHONE", updatedContact.phone)
+                    putExtra("CONTACT_EMAIL", updatedContact.email)
+                    putExtra("CONTACT_ADDRESS", updatedContact.address)
+                    putExtra("CONTACT_NOTE", updatedContact.note)
+                    putExtra("CONTACT_IMAGE", updatedContact.imageUri)
+                }
+                startActivity(intent)
+            }
         }
     }
 
@@ -168,6 +227,7 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun loadMessages() {
+        dbHelper.markChatAsRead(contactNumber)
         messageList = dbHelper.getMessages(contactNumber) as ArrayList<Message>
 
         messageAdapter.updateMessages(messageList)
@@ -205,4 +265,5 @@ class ChatActivity : AppCompatActivity() {
             startActivity(callIntent)
         }
     }
+
 }

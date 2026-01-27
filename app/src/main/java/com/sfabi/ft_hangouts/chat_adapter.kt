@@ -6,23 +6,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.ImageView
 import android.widget.TextView
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ChatAdapter(private val context: Context, private val chatList: List<ChatPreview>) : BaseAdapter() {
+class ChatAdapter(private val context: Context, private var originalChatList: List<ChatPreview>) : BaseAdapter(), Filterable {
 
-    override fun getCount(): Int = chatList.size
+    private var filteredChatList: List<ChatPreview> = originalChatList
 
-    override fun getItem(position: Int): Any = chatList[position]
+    override fun getCount(): Int = filteredChatList.size
+
+    override fun getItem(position: Int): Any = filteredChatList[position]
 
     override fun getItemId(position: Int): Long = position.toLong()
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = convertView ?: LayoutInflater.from(context).inflate(R.layout.item_chat, parent, false)
 
-        val chat = chatList[position]
+        val chat = filteredChatList[position]
 
         val tvName = view.findViewById<TextView>(R.id.tvContactName)
         val tvMessage = view.findViewById<TextView>(R.id.tvLastMessage)
@@ -32,14 +36,12 @@ class ChatAdapter(private val context: Context, private val chatList: List<ChatP
 
         tvName.text = chat.contactName
 
-        // Set message text first
         if (chat.lastMessage.isEmpty()) {
             tvMessage.text = context.getString(R.string.new_chat_text)
         } else {
             tvMessage.text = chat.lastMessage
         }
 
-        // Apply styles based on read/unread state
         if (chat.unreadCount > 0) {
             tvUnreadBadge.visibility = View.VISIBLE
             tvUnreadBadge.text = chat.unreadCount.toString()
@@ -89,5 +91,29 @@ class ChatAdapter(private val context: Context, private val chatList: List<ChatP
         }
 
         return view
+    }
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val charString = constraint?.toString()?.toLowerCase(Locale.ROOT) ?: ""
+                val results = FilterResults()
+                if (charString.isEmpty()) {
+                    results.values = originalChatList
+                } else {
+                    val filtered = originalChatList.filter {
+                        it.contactName.toLowerCase(Locale.ROOT).contains(charString)
+                    }
+                    results.values = filtered
+                }
+                return results
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                filteredChatList = results?.values as? List<ChatPreview> ?: emptyList()
+                notifyDataSetChanged()
+            }
+        }
     }
 }

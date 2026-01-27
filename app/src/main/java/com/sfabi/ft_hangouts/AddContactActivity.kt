@@ -50,6 +50,7 @@ class AddContactActivity : AppCompatActivity() {
         val etNote = findViewById<EditText>(R.id.etNote)
         val btnSave = findViewById<Button>(R.id.btnSave)
 
+
         ivProfile.setOnClickListener {
             getContent.launch("image/*")
         }
@@ -63,8 +64,15 @@ class AddContactActivity : AppCompatActivity() {
             val address = etAddress.text.toString()
             val note = etNote.text.toString()
 
+            val phoneInDb = dbHelper.getContactByPhone(phone)
+
+            if (phoneInDb != null) {
+                Toast.makeText(this, R.string.phone_exists, Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             if (name.isEmpty() || phone.isEmpty()) {
-                Toast.makeText(this, "@string/info_toast", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.info_toast, Toast.LENGTH_SHORT).show()
             } else {
 
                 var imagePathToSave = ""
@@ -81,10 +89,10 @@ class AddContactActivity : AppCompatActivity() {
                 val result = dbHelper.addContact(contact)
 
                 if (result > -1) {
-                    Toast.makeText(this, "@string/good_toast", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.good_toast, Toast.LENGTH_SHORT).show()
                     finish()
                 } else {
-                    Toast.makeText(this, "@string/bad_toast", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.bad_toast, Toast.LENGTH_SHORT).show()
                 }
             }
         }

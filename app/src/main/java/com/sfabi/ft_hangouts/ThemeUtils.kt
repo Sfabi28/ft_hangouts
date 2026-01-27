@@ -12,7 +12,7 @@ object ThemeUtils {
     private const val PREF_NAME = "AppPreferences"
     private const val KEY_HEADER_COLOR = "header_color"
 
-    private const val DEFAULT_COLOR = "#00FF00"
+    private const val DEFAULT_COLOR = "#FFD54F"
 
     fun saveHeaderColor(context: Context, colorHex: String) {
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -51,7 +51,7 @@ object ThemeUtils {
         val btnBack = activity.findViewById<ImageButton>(R.id.btnBack)
         btnBack?.setColorFilter(textColorInt)
 
-        val btnOptions = activity.findViewById<ImageButton>(R.id.btnOptions) // O btnSettings
+        val btnOptions = activity.findViewById<ImageButton>(R.id.btnOptions)
         btnOptions?.setColorFilter(textColorInt)
 
         val btnCall = activity.findViewById<ImageButton>(R.id.btnCall)
@@ -83,6 +83,5 @@ object ThemeUtils {
             btnIt.backgroundTintList = android.content.res.ColorStateList.valueOf(backgroundColorInt)
             btnIt.setTextColor(textColorInt)
         }
-
     }
 }
