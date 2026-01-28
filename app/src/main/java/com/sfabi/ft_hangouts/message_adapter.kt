@@ -51,7 +51,6 @@ class MessageAdapter(
             val background = holder.tvBody.background.mutate() as GradientDrawable
             background.setColor(colorInt)
 
-            // Set text color based on background brightness
             val darkness = 1 - (0.299 * Color.red(colorInt) + 0.587 * Color.green(colorInt) + 0.114 * Color.blue(colorInt)) / 255
             if (darkness < 0.5) {
                 holder.tvBody.setTextColor(Color.BLACK)

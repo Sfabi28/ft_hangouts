@@ -1,5 +1,6 @@
 package com.sfabi.ft_hangouts
 
+import android.R
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -14,33 +15,43 @@ class SmsReceiver : BroadcastReceiver() {
                 val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
                 val dbHelper = DatabaseHelper(context)
 
+                var message = ""
+
                 for (sms in messages) {
-                    var rawSender = sms.displayOriginatingAddress ?: "Sconosciuto"
-                    val messageBody = sms.messageBody ?: ""
-
-                    val allContacts = dbHelper.getAllContacts()
-                    val matchingContact = allContacts.firstOrNull { contact ->
-                        val cleanRawSender = rawSender.filter { it.isDigit() }
-                        val cleanContactPhone = contact.phone.filter { it.isDigit() }
-                        cleanRawSender.endsWith(cleanContactPhone) || cleanContactPhone.endsWith(cleanRawSender)
-                    }
-
-                    val finalSender = if (matchingContact != null) {
-                        matchingContact.phone
-                    } else {
-                        if (rawSender.startsWith("+39")) {
-                            rawSender.substring(3)
-                        } else {
-                            rawSender
-                        }
-                    }
-
-                    dbHelper.addMessage(finalSender, messageBody, 2)
-
-                    val updateIntent = Intent("com.sfabi.ft_hangouts.UPDATE_CHAT")
-                    updateIntent.setPackage(context.packageName)
-                    context.sendBroadcast(updateIntent)
+                    message += sms.messageBody ?: ""
                 }
+
+                val rawSender = messages[0].displayOriginatingAddress ?: "Sconosciuto"
+
+                val allContacts = dbHelper.getAllContacts()
+                val matchingContact = allContacts.firstOrNull { contact ->
+                    val cleanRawSender = rawSender.filter { it.isDigit() }
+                    val cleanContactPhone = contact.phone.filter { it.isDigit() }
+
+                    if (cleanRawSender.isNotEmpty() && cleanContactPhone.isNotEmpty()) {
+                        cleanRawSender.endsWith(cleanContactPhone) || cleanContactPhone.endsWith(cleanRawSender)
+                    } else {
+                        false
+                    }
+                }
+
+                var finalSender : String
+                if (matchingContact != null) {
+                    finalSender = matchingContact.phone
+                } else {
+                    if (rawSender.startsWith("+39")) {
+                        finalSender = rawSender.substring(3)
+                    } else {
+                        finalSender = rawSender
+                    }
+                    dbHelper.addContact(Contact(0, finalSender, finalSender, "", "", "", ""))
+                }
+
+                dbHelper.addMessage(finalSender, message, 2)
+
+                val updateIntent = Intent("com.sfabi.ft_hangouts.UPDATE_CHAT")
+                updateIntent.setPackage(context.packageName)
+                context.sendBroadcast(updateIntent)
 
             } catch (e: Exception) {
                 e.printStackTrace()

@@ -29,10 +29,12 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks {
                 val currentTime = System.currentTimeMillis()
                 val diff = currentTime - lastStopTime
 
-                val seconds = diff / 1000
-                val millis = diff % 1000
+                val totalSeconds = diff / 1000
 
-                if (seconds < 1 && millis < 200) {
+                val minutes = totalSeconds / 60
+                val seconds = totalSeconds % 60
+
+                if (diff < 1200) {
                     startedActivityCount++
                     return
                 }
@@ -40,7 +42,9 @@ class MyApplication : Application(), Application.ActivityLifecycleCallbacks {
                 val dateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
                 val timeString = dateFormat.format(Date(lastStopTime))
 
-                val message = activity.getString(R.string.toast_time) + " " + "$timeString ($seconds s e $millis ms)"
+                val durationString = String.format("%02d:%02d", minutes, seconds)
+
+                val message = activity.getString(R.string.toast_time) + " " + "$timeString ($durationString)"
 
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
             }
