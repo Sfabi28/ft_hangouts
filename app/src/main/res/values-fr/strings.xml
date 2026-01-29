@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">FT_HANGOUTS</string>
+
+    <string name="info_toast">Nom et téléphone requis !</string>
+    <string name="good_toast">Contact enregistré !</string>
+    <string name="bad_toast">Erreur lors de l\'enregistrement du contact</string>
+    <string name="permission_toast">L\'application ne peut pas fonctionner sans permissions !</string>
+
+    <string name="new_chat_text">Appuyez pour discuter</string>
+    <string name="last_message">Dernier message</string>
+    <string name="find_hint">Rechercher un contact</string>
+
+    <string name="new_contact">Nouveau contact</string>
+    <string name="modify_contact">Modifier le contact</string>
+    <string name="name">Nom</string>
+    <string name="number">Numéro de téléphone</string>
+    <string name="email">E-mail</string>
+    <string name="address">Adresse</string>
+    <string name="notes">Notes</string>
+    <string name="btn_save">Enregistrer le contact</string>
+    <string name="save">ENREGISTRER LE CONTACT</string>
+    <string name="delete">SUPPRIMER LE CONTACT</string>
+    <string name="type">Écrivez un message</string>
+
+    <string name="settings_title">Paramètres</string>
+    <string name="settings">Paramètres</string>
+    <string name="app_color">Couleur de l\'application</string>
+    <string name="language_title">Langue</string>
+    <string name="langIt">Italien</string>
+    <string name="langEn">Anglais</string>
+    <string name="System">Système</string>
+
+    <string name="delete_title">Supprimer le contact</string>
+    <string name="delete_confirm">Voulez-vous vraiment supprimer </string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="deleted_success">Contact supprimé avec succès</string>
+
+    <string name="delete_chat_title">Supprimer la discussion</string>
+    <string name="delete_chat_confirm">Voulez-vous vraiment supprimer l\'historique de cette discussion ?</string>
+    <string name="chat_deleted_success">Discussion supprimée avec succès</string>
+    <string name="phone_not_available">Numéro non disponible pour supprimer la discussion.</string>
+    <string name="phone_exists">Ce numéro est déjà enregistré</string>
+    <string name="toast_time">App rouverte ! Était en arrière-plan depuis</string>
+
+</resources>

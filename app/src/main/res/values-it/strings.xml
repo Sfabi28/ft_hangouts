@@ -30,6 +30,7 @@
     <string name="langIt">Italiano</string>
     <string name="langEn">Inglese</string>
 
+    <string name="System">Sistema</string>
     <string name="delete_title">Elimina Contatto</string>
     <string name="delete_confirm">Sei sicuro di voler eliminare </string>
     <string name="yes">Si</string>

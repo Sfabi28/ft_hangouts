@@ -8,7 +8,7 @@ import org.w3c.dom.Text
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
         private const val DATABASE_NAME = "ft_hangouts.db"
-        private const val DATABASE_VERSION = 14
+        private const val DATABASE_VERSION = 15
         const val TABLE_CONTACTS = "contacts"
         const val COL_ID = "id"
         const val COL_NAME = "name"

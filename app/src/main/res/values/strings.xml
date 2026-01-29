@@ -28,6 +28,8 @@
     <string name="language_title">Language</string>
     <string name="langIt">Italian</string>
     <string name="langEn">English</string>
+    <string name="System">System</string>
+
 
     <string name="delete_title">Delete Contact</string>
     <string name="delete_confirm">Are you sure you want to delete </string>

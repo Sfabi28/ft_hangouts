@@ -83,5 +83,11 @@ object ThemeUtils {
             btnIt.backgroundTintList = android.content.res.ColorStateList.valueOf(backgroundColorInt)
             btnIt.setTextColor(textColorInt)
         }
+
+        val btnSystem = activity.findViewById<android.widget.Button>(R.id.btnSystem)
+        if (btnSystem != null) {
+            btnSystem.backgroundTintList = android.content.res.ColorStateList.valueOf(backgroundColorInt)
+            btnSystem.setTextColor(textColorInt)
+        }
     }
 }

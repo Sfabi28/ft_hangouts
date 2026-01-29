@@ -179,7 +179,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupListViewListeners() {
         listView.setOnItemClickListener { parent, _, position, _ ->
-            // IMPORTANTE: Prendiamo l'oggetto dall'adapter (che contiene la lista filtrata corretta)
             val selectedChat = parent.adapter.getItem(position) as ChatPreview
 
             val intent = Intent(this, ChatActivity::class.java)
